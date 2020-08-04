@@ -4,6 +4,7 @@ const db = require("../data/db");
 
 const router = express.Router();
 
+//GET All
 router.get("/", (req, res) => {
     db.find(req.query)
         .then( database =>{
@@ -15,6 +16,7 @@ router.get("/", (req, res) => {
         })
 })
 
+//GET All by id
 router.get("/:id", (req, res) => {
     db.findById(req.params.id)
     .then( database =>{
@@ -33,6 +35,7 @@ router.get("/:id", (req, res) => {
     })  
 })
 
+//GET all comments by id
 router.get("/:id/comments", (req, res) => {
     const id = req.params.id
 
@@ -60,6 +63,7 @@ router.get("/:id/comments", (req, res) => {
     })  
 })
 
+//ADD a post
 router.post("/", (req, res) => {
     const post = req.body
     
@@ -77,6 +81,7 @@ router.post("/", (req, res) => {
     }
 })
 
+//ADD a comment by a post id
 router.post("/:id/comments", (req, res) => {
     const text = req.body
     const id = req.params.id
@@ -107,8 +112,9 @@ router.post("/:id/comments", (req, res) => {
         console.log(err)
         res.status(500).json({ error: "The posts information could not be retrieved." })
     })  
-})
+}) 
 
+//DELETE a post
 router.delete("/:id", (req, res) => {
     const id = req.params.id
     
@@ -127,6 +133,7 @@ router.delete("/:id", (req, res) => {
     }) 
 })
 
+//UPDATE a post
 router.put("/:id", (req,res) => {
     const id = req.params.id
     const post = req.body
