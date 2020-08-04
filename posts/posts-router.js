@@ -17,17 +17,20 @@ router.get("/", (req, res) => {
 
 router.get("/:id", (req, res) => {
     db.findById(req.params.id)
-        .then( database =>{
-            if(database){
-                res.status(200).json({ database })
-            } else {
-                res.status(404).json({ message: "The post with the specified ID does not exist." })
-            }
-        })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({ error: "The posts information could not be retrieved." })
-        })
+    .then( database =>{
+        const post = database[0]
+        console.log(post)
+
+        if(post){
+            res.status(200).json({ database })
+        } else {
+            res.status(404).json({ message: "The post with the specified ID does not exist." })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({ error: "The posts information could not be retrieved." })
+    })  
 })
 
 router.post("/", (req, res) => {
@@ -45,6 +48,38 @@ router.post("/", (req, res) => {
             res.status(500).json({ error: "There was an error while saving the post to the database" })
         })
     }
+})
+
+router.post("/:id/comments", (req, res) => {
+    const text = req.body
+    const id = req.params.id
+
+    db.findById(id)
+    .then(database => {
+        const post = database[0]
+        console.log(post)
+
+        if(post){
+            if(!text.text){
+                res.status(400).json({ errorMessage: "Please provide text for the comment." })
+            } else {
+                db.insertComment(text)
+                .then(item => {
+                    res.status(201).json({ text }) 
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.status(500).json({ error: "The posts information could not be retrieved." })
+                })  
+            }   
+        } else {
+            res.status(404).json({ message: "The post with the specified ID does not exist." }) 
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({ error: "The posts information could not be retrieved." })
+    })  
 })
 
 module.exports = router;
